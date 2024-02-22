@@ -38,12 +38,12 @@
                             @click="editor.chain().focus().toggleHeading({level: 4}).run()">
                                 <q-item-section>H4</q-item-section>
                             </q-item>
-                            <q-item 
-                            clickable
-                            :class="{ 'is-active': editor.isActive('heading', {level: 5}) }"
-                            @click="editor.chain().focus().toggleHeading({level: 5}).run()">
-                                <q-item-section>H5</q-item-section>
-                            </q-item>
+                          <q-item
+                              clickable
+                              :class="{ 'is-active': editor.isActive('heading', {level: 5}) }"
+                              @click="editor.chain().focus().toggleHeading({level: 5}).run()">
+                            <q-item-section>H5</q-item-section>
+                          </q-item>
                             <q-item 
                             clickable
                             :class="{ 'is-active': editor.isActive('heading', {level: 6}) }"
@@ -113,13 +113,21 @@
                 <q-separator vertical class="q-mx-sm" v-if="toolbar.indexOf('marks') !== -1" />
 
                 <div v-if="toolbar.indexOf('list') !== -1">
-                    <q-btn flat size="sm" dense
-                    :class="{ 'is-active': editor.isActive('bulletList') }"
-                    @click="editor.chain().focus().toggleBulletList().run()"
-                    >
-                        <q-tooltip :delay="500" content-class="text-bold">Bullets</q-tooltip>
-                        <q-icon name="format_list_bulleted" />
-                    </q-btn>
+                  <q-btn flat size="sm" dense
+                         :class="{ 'is-active': editor.isActive('bulletList') }"
+                         @click="editor.chain().focus().toggleBulletList().run()"
+                  >
+                    <q-tooltip :delay="500" content-class="text-bold">Bullets</q-tooltip>
+                    <q-icon name="format_list_bulleted" />
+
+                  </q-btn>
+                  <q-btn flat size="sm" dense
+                         :class="{ 'is-active': editor.isActive('bulletList') }"
+                         @click="editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()"
+                  >
+                    <q-tooltip :delay="500" content-class="text-bold">Table</q-tooltip>
+                    <q-icon name="format_list_bulleted" />
+                  </q-btn>
 
                     <q-btn flat size="sm" dense
                     :class="{ 'is-active': editor.isActive('orderedList') }"
@@ -179,12 +187,12 @@
                 </div>
                 <q-separator vertical class="q-mx-sm" v-if="toolbar.indexOf('caption') !== -1" />
 
-                <q-btn flat size="sm" dense
-                @click="editor.commands.undo"
-                >
-                    <q-tooltip :delay="500" content-class="text-bold">Undo</q-tooltip>
-                    <q-icon name="undo" />
-                </q-btn>
+              <q-btn flat size="sm" dense
+                     @click="editor.commands.undo"
+              >
+                <q-tooltip :delay="500" content-class="text-bold">Undo</q-tooltip>
+                <q-icon name="undo" />
+              </q-btn>
 
                 <q-btn flat size="sm" dense
                 @click="editor.commands.redo"
@@ -228,6 +236,14 @@ const Diff = require('diff')
 
 import Utils from '@/services/utils'
 import ImageService from '@/services/image'
+import Document from '@tiptap/extension-document'
+import Gapcursor from '@tiptap/extension-gapcursor'
+import Paragraph from '@tiptap/extension-paragraph'
+import Table from '@tiptap/extension-table'
+import TableCell from '@tiptap/extension-table-cell'
+import TableHeader from '@tiptap/extension-table-header'
+import TableRow from '@tiptap/extension-table-row'
+import Text from '@tiptap/extension-text'
 
 export default {
     name: 'BasicEditor',
@@ -264,6 +280,12 @@ export default {
         return {
             editor: new Editor({
                 extensions: [
+                  Table.configure({
+                    resizable: true,
+                  }),
+                  TableRow,
+                  TableHeader,
+                  TableCell,
                     StarterKit.configure({
                         heading: {
                             levels: [1, 2, 3, 4, 5, 6]
